@@ -36,7 +36,7 @@ void checkCards(std::vector<int> hand, bool flag)
 {
     int count = 0;
     std::string quote;
-    
+
     (flag) ?  quote = "card in player's hand: " : quote = "card in croupier's hand: ";
 
     for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
@@ -63,14 +63,33 @@ int main ()
     // setting the Shoe
     cr.setDeck(nods);
 
-    // setting the first hands of the round
-    cr.setFirstCards(pl);
 
-    //checking the cards for player
-    checkCards(pl.pCards, true);
+    for (int i = 0; i < 50; i++)
+    {
 
-    //checking the cards for croupier
-    checkCards(cr.cCards, false);
+        // setting the first hands of the round
+        cr.setFirstCards(pl);
 
-    return 0;
+        //checking the cards for player
+        checkCards(pl.pCards, true);
+
+        //checking the cards for croupier
+        checkCards(cr.cCards, false);
+
+        // checking total number for croupier
+        int cHand = cr.checkHand(cr.cCards);
+
+        // checking total number for player
+        int pHand = cr.checkHand(pl.pCards);
+
+        printf(" sum of player hand: %d\n",pHand);
+        printf(" sum of croupier hand: %d\n",cHand);
+
+        printf(" end of round %d\n\n", i);
+
+        cr.clearHand();
+        pl.clearHand();
+     }
+
+     return 0;
 }

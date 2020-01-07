@@ -6,7 +6,11 @@
 class Player {
   public:
     std::vector<int> pCards;
+    int Sum;
 
+    void clearHand(){
+        pCards.clear();
+    }
 
 };
 
@@ -21,6 +25,11 @@ class Croupier {
 
     // map for card left in Shoe
     std::map<int,int> frecMap;
+
+    // clear the hand
+    void clearHand(){
+        cCards.clear();
+    }
 
     // setting number of decks
     void setDeck (int n)
@@ -73,15 +82,48 @@ class Croupier {
         return num;
     }
 
-    // checking the sum of points in the hand
-    // int checkHand (std::vector<int> hand, bool flag)
-    // {
-    //     int count = 0;
-    //     for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
-    //     {
-    //         int card = *(it);
-    //
-    //     }
-    //
-    // }
+    //checking the sum of points in the hand
+    int checkHand (std::vector<int> hand)
+    {
+        int count = 0;
+        int aceCnt = 0;
+
+        for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
+        {
+            int card = *(it);
+            if (2 <= card && card <= 10)
+                count += card;
+            else if (11 <= card && card <= 13){
+                count += 10;
+            } else {
+                aceCnt++;
+            }
+
+        }
+
+        // adding the Aces count
+        if(aceCnt == 1)
+            count += 11;
+        else if (aceCnt > 1)
+            count += 10 + aceCnt;
+
+        return count;
+
+    }
+
+    //croupier taking cards until 17
+    int dealingTo17()
+    {
+       int count = checkHand(cCards);
+
+       while(count < 17)
+       {
+           cr.getCard();
+
+       }
+
+       return count;
+
+    }
+
 };
