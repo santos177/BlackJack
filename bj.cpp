@@ -63,8 +63,8 @@ int main ()
     // setting the Shoe
     cr.setDeck(nods);
 
-
-    for (int i = 0; i < 50; i++)
+    // 20 rounds
+    for (int i = 0; i < 20; i++)
     {
 
         // setting the first hands of the round
@@ -84,6 +84,13 @@ int main ()
 
         printf(" sum of player hand: %d\n",pHand);
         printf(" sum of croupier hand: %d\n",cHand);
+
+        printf(" player stand\n");
+
+        cr.dealingTo17();
+
+        //checking the winner of round
+        cr.getWinner(pl);
 
         printf(" end of round %d\n\n", i);
 

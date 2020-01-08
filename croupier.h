@@ -26,9 +26,34 @@ class Croupier {
     // map for card left in Shoe
     std::map<int,int> frecMap;
 
+
+    // clear the hand
+    void getWinner(Player &pl)
+    {
+        int plSum = checkHand(pl.pCards);
+        int crSum = checkHand(cCards);
+
+        printf("plSum: %d\n",plSum);
+        printf("crSum: %d\n",crSum);
+
+        if (crSum > 21 || ((plSum > crSum) && (21 >= plSum)))
+            printf("player wins!\n");
+        else if (plSum > 21 || ((crSum > plSum) && (21 >= crSum)))
+            printf("croupier wins!\n");
+        else
+            printf("nobody wins...\n");
+
+    }
+
     // clear the hand
     void clearHand(){
         cCards.clear();
+    }
+
+    // get first card of croupier
+    int getFirstCard()
+    {
+        return cCards.front();
     }
 
     // setting number of decks
@@ -85,44 +110,49 @@ class Croupier {
     //checking the sum of points in the hand
     int checkHand (std::vector<int> hand)
     {
-        int count = 0;
-        int aceCnt = 0;
+        int sum = 0;
+        int aceSum = 0;
 
         for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
         {
             int card = *(it);
             if (2 <= card && card <= 10)
-                count += card;
+                sum += card;
             else if (11 <= card && card <= 13){
-                count += 10;
+                sum += 10;
             } else {
-                aceCnt++;
+                aceSum++;
             }
 
         }
 
-        // adding the Aces count
-        if(aceCnt == 1)
-            count += 11;
-        else if (aceCnt > 1)
-            count += 10 + aceCnt;
+        // adding the Aces sum
+        if(aceSum == 1)
+            sum += 11;
+        else if (aceSum > 1)
+            sum += 10 + aceSum;
 
-        return count;
+        return sum;
 
     }
 
     //croupier taking cards until 17
     int dealingTo17()
     {
-       int count = checkHand(cCards);
+       // first check
+       int sum = checkHand(cCards);
 
-       while(count < 17)
+       while(sum < 17)
        {
-           cr.getCard();
+           int crC = getCard();
+           printf("new card for croupier: %d\n",crC);
+           cCards.push_back(crC);
+           sum = checkHand(cCards);
+           printf("sum for croupier: %d\n", sum);
 
        }
 
-       return count;
+       return sum;
 
     }
 
