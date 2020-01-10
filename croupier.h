@@ -2,15 +2,22 @@
 #include <stdlib.h>
 #include <map>
 #include <vector>
+#include <iostream>
+
+std::string printCard(int c);
 
 class Player {
   public:
     std::vector<int> pCards;
+
     int Sum;
 
     void clearHand(){
         pCards.clear();
     }
+
+    //bankroll
+    int Money;
 
 };
 
@@ -27,20 +34,24 @@ class Croupier {
     std::map<int,int> frecMap;
 
 
-    // clear the hand
+    // who is the winner?
     void getWinner(Player &pl)
     {
-        int plSum = checkHand(pl.pCards);
-        int crSum = checkHand(cCards);
+        int plSum = checkHand(pl.pCards).first;
+        int crSum = checkHand(cCards).first;
 
         printf("plSum: %d\n",plSum);
         printf("crSum: %d\n",crSum);
 
         if (crSum > 21 || ((plSum > crSum) && (21 >= plSum)))
+        {
+            pl.Money++;
             printf("player wins!\n");
-        else if (plSum > 21 || ((crSum > plSum) && (21 >= crSum)))
+
+        } else if (plSum > 21 || ((crSum > plSum) && (21 >= crSum))){
+            pl.Money--;
             printf("croupier wins!\n");
-        else
+        } else
             printf("nobody wins...\n");
 
     }
@@ -108,10 +119,11 @@ class Croupier {
     }
 
     //checking the sum of points in the hand
-    int checkHand (std::vector<int> hand)
+    std::pair<int, bool> checkHand (std::vector<int> hand)
     {
         int sum = 0;
         int aceSum = 0;
+        bool flag = false;
 
         for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
         {
@@ -126,13 +138,16 @@ class Croupier {
 
         }
 
+        // it's a soft hand
+        if(aceSum != 0) flag = true;
+
         // adding the Aces sum
         if(aceSum == 1)
             sum += 11;
         else if (aceSum > 1)
             sum += 10 + aceSum;
 
-        return sum;
+        return std::make_pair(sum,flag);
 
     }
 
@@ -140,14 +155,15 @@ class Croupier {
     int dealingTo17()
     {
        // first check
-       int sum = checkHand(cCards);
+       int sum = checkHand(cCards).first;
 
        while(sum < 17)
        {
            int crC = getCard();
-           printf("new card for croupier: %d\n",crC);
+           std::string strCard = printCard(crC);
+           std::cout << "new card for croupier:" << strCard << "\n";
            cCards.push_back(crC);
-           sum = checkHand(cCards);
+           sum = checkHand(cCards).first;
            printf("sum for croupier: %d\n", sum);
 
        }

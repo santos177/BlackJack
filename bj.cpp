@@ -63,6 +63,9 @@ int main ()
     // setting the Shoe
     cr.setDeck(nods);
 
+    //setting player's Money
+    pl.Money = 20;
+
     // 20 rounds
     for (int i = 0; i < 20; i++)
     {
@@ -77,13 +80,18 @@ int main ()
         checkCards(cr.cCards, false);
 
         // checking total number for croupier
-        int cHand = cr.checkHand(cr.cCards);
+        int cHand = cr.checkHand(cr.cCards).first;
+        bool softC = cr.checkHand(cr.cCards).second;
 
         // checking total number for player
-        int pHand = cr.checkHand(pl.pCards);
+        int pHand = cr.checkHand(pl.pCards).first;
+        bool softP = cr.checkHand(pl.pCards).second;
 
         printf(" sum of player hand: %d\n",pHand);
+        (softP) ? printf(" soft hand for player\n") : printf(" hard hand for player\n");
+
         printf(" sum of croupier hand: %d\n",cHand);
+        (softC) ? printf(" soft hand for croupier\n") : printf(" hard hand for croupier\n");
 
         printf(" player stand\n");
 
@@ -92,11 +100,15 @@ int main ()
         //checking the winner of round
         cr.getWinner(pl);
 
+        printf(" Money of player: %d\n\n",pl.Money);
         printf(" end of round %d\n\n", i);
+
 
         cr.clearHand();
         pl.clearHand();
      }
+
+     printf(" Final balance of player: %d\n\n", pl.Money);
 
      return 0;
 }
