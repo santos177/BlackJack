@@ -16,6 +16,11 @@ class Player {
         pCards.clear();
     }
 
+    // inputs: croupier's visible card, amount of player, soft or hard hand for player.
+    // void basicStrategy(int crVisCard, ){
+    //     pCards
+    // }
+
     //bankroll
     int Money;
 
@@ -67,6 +72,29 @@ class Croupier {
         return cCards.front();
     }
 
+    // do we have Blackjack?
+    bool checkBlackJack(std::vector<int> &firstHand)
+    {
+        bool ace = false;
+        bool ten = false;
+        for(std::vector<int>::iterator it = firstHand.begin(); it!=firstHand.end();++it)
+        {
+            int card = *(it);
+
+            if (card == 1)
+                ace = true;
+            else if (10 <= card && card <= 13)
+                ten = true;
+
+        }
+
+        if (ace && ten)
+            return true;
+        else
+            return false;
+
+    }
+
     // setting number of decks
     void setDeck (int n)
     {
@@ -76,7 +104,8 @@ class Croupier {
     }
 
     //setting first cards for Croupier and Player
-    void setFirstCards (Player &pl)
+    //(return 1 : blackjack for player, -1: blackjack for croupier, 0: none)
+    int setFirstCards (Player &pl)
     {
       for (int j = 0; j <= 1; j++)
       {
@@ -89,6 +118,15 @@ class Croupier {
           cCards.push_back(crC);
       }
 
+      bool plBj = checkBlackJack(pl.pCards);
+      bool crBj = checkBlackJack(cCards);
+
+      if (plBj && !crBj)
+         return 1;
+      else if (!plBj && crBj)
+         return -1;
+      else
+         return 0;
     }
 
     // getting a card from Shoe
