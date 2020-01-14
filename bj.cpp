@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <ctime>
 
 /*
 *  basic bj program
@@ -51,10 +52,15 @@ void checkCards(std::vector<int> hand, bool flag)
 
 int main ()
 {
+    // seed for randomness
+    srand(time(NULL));
+
     int count = 0;
+    int win = 0;
+    int loss = 0;
 
     // number of decks into the Shoe
-    int nods = 6;
+    int nods = 6*100;
 
     // creating croupier and player
     Croupier cr;
@@ -63,14 +69,22 @@ int main ()
     // setting the Shoe
     cr.setDeck(nods);
 
-    //setting player's Money
-    pl.Money = 20;
 
-    // 20 rounds
-    for (int i = 0; i < 20; i++)
+    //minimal bet
+    cr.minBet = 2;
+
+    //setting player's Money
+    pl.Money = 40;
+
+    // 300 rounds
+    for (int i = 0; i < 300; i++)
     {
 
-        // setting the first hands of the round
+        // player needs money and we need cards in the Shoe
+        if (pl.Money <= cr.minBet || cr.cardTotal <= 10)
+            break;
+
+        // setting the first hands of the round (blackjacks?)
         cr.setFirstCards(pl);
 
         //checking the cards for player
@@ -98,17 +112,28 @@ int main ()
         cr.dealingTo17();
 
         //checking the winner of round
-        cr.getWinner(pl);
+        if (cr.getWinner(pl) == 1)
+            win++;
+        else if (cr.getWinner(pl) == -1)
+            loss++;
 
         printf(" Money of player: %d\n\n",pl.Money);
+        printf(" card total: %d\n\n",cr.cardTotal);
         printf(" end of round %d\n\n", i);
+
+        printf("---------------------------------------------------------\n");
 
 
         cr.clearHand();
         pl.clearHand();
+        count++;
+
      }
 
      printf(" Final balance of player: %d\n\n", pl.Money);
+     printf(" Total of hands: %d\n\n", count);
+     printf(" Total winnings: %d\n\n", win);
+     printf(" Total losses: %d\n\n", loss);
 
      return 0;
 }

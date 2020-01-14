@@ -12,6 +12,9 @@ class Player {
 
     int Sum;
 
+    //blackjack?
+    int blackjack = false;
+
     void clearHand(){
         pCards.clear();
     }
@@ -38,9 +41,14 @@ class Croupier {
     // map for card left in Shoe
     std::map<int,int> frecMap;
 
+    //minimal bet
+    int minBet;
 
-    // who is the winner?
-    void getWinner(Player &pl)
+    //blackjack?
+    int blackjack = false;
+
+    // who is the winner? 1: player wins, -1: croupier wins, 0: nobody
+    int getWinner(Player &pl)
     {
         int plSum = checkHand(pl.pCards).first;
         int crSum = checkHand(cCards).first;
@@ -50,15 +58,21 @@ class Croupier {
 
         if (crSum > 21 || ((plSum > crSum) && (21 >= plSum)))
         {
-            pl.Money++;
+            if(pl.blackjack){
+                pl.Money += 3;
+            } else
+                pl.Money += 2;
+
             printf("player wins!\n");
+            return 1;
 
         } else if (plSum > 21 || ((crSum > plSum) && (21 >= crSum))){
-            pl.Money--;
+            pl.Money -= 2;
             printf("croupier wins!\n");
+            return -1;
         } else
             printf("nobody wins...\n");
-
+            return 0;
     }
 
     // clear the hand
@@ -73,10 +87,12 @@ class Croupier {
     }
 
     // do we have Blackjack?
-    bool checkBlackJack(std::vector<int> &firstHand)
+    bool checkBlackJack(std::vector<int> firstHand)
     {
+
         bool ace = false;
         bool ten = false;
+
         for(std::vector<int>::iterator it = firstHand.begin(); it!=firstHand.end();++it)
         {
             int card = *(it);
@@ -95,6 +111,7 @@ class Croupier {
 
     }
 
+
     // setting number of decks
     void setDeck (int n)
     {
@@ -103,10 +120,12 @@ class Croupier {
         cardTotal = 52 * n;
     }
 
-    //setting first cards for Croupier and Player
-    //(return 1 : blackjack for player, -1: blackjack for croupier, 0: none)
+    // setting first cards for Croupier and Player
+    // (return 1 : blackjack for player, -1: blackjack for croupier, 0: none)
+    // (return -2 : empty Shoe!)
     int setFirstCards (Player &pl)
     {
+
       for (int j = 0; j <= 1; j++)
       {
           // one card for player
@@ -122,10 +141,13 @@ class Croupier {
       bool crBj = checkBlackJack(cCards);
 
       if (plBj && !crBj)
-         return 1;
-      else if (!plBj && crBj)
-         return -1;
-      else
+      {
+          pl.blackjack = true;
+          return 1;
+      } else if (!plBj && crBj){
+          blackjack = true;
+          return -1;
+      } else
          return 0;
     }
 
