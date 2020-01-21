@@ -3,11 +3,26 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <ctime>
+
 
 std::string printCard(int c);
 
 class Player {
   public:
+
+    //bankroll
+    int Money;
+
+    // x,x where x is 2,3,4,5,6,7,8,9,A,J,Q,K
+    std::map<std::pair<int,int>, std::vector<int>> pairStrategy;
+
+    // X where x is : 5,6,7,8,9,10 ..
+    std::map<int, std::vector<int>> hardStrategy;
+
+    //A,x where x is 2,3,4,5,6,7,8,9
+    std::map<int, std::vector<int>> softStrategy;
+
     std::vector<int> pCards;
 
     int Sum;
@@ -19,13 +34,24 @@ class Player {
         pCards.clear();
     }
 
-    // inputs: croupier's visible card, amount of player, soft or hard hand for player.
-    // void basicStrategy(int crVisCard, ){
-    //     pCards
-    // }
+    // inputs: amount of player; type: pair, soft or hard hand for player; croupier's first card
+    void basicStrategy(int pHand, int type, int firstCard)
+    {
+        bool Stand = false;
 
-    //bankroll
-    int Money;
+        while (!Stand)
+        {
+            if (type == 0)
+            {
+                // use hard hands strategy
+            } else if (type == -1){
+              // use pair hands strategy
+            } else if (type == 1){
+              // use soft hands strategy
+            }
+        }
+
+    }
 
 };
 
@@ -179,15 +205,17 @@ class Croupier {
     }
 
     //checking the sum of points in the hand
-    std::pair<int, bool> checkHand (std::vector<int> hand)
+    std::pair<int, int> checkHand (std::vector<int> hand)
     {
+        int count = 0;
         int sum = 0;
         int aceSum = 0;
-        bool flag = false;
+        int flag = 0;  // -1 : pair, 0 : hard hand, 1: soft hand
 
         for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
         {
             int card = *(it);
+
             if (2 <= card && card <= 10)
                 sum += card;
             else if (11 <= card && card <= 13){
@@ -196,10 +224,14 @@ class Croupier {
                 aceSum++;
             }
 
+            count++;
+
         }
 
-        // it's a soft hand
-        if(aceSum != 0) flag = true;
+        if (count == 2 && (hand[0] == hand[1]))
+            flag = -1; //pairs
+        else if(aceSum != 0)
+            flag = 1;  // soft hand
 
         // adding the Aces sum
         if(aceSum == 1)

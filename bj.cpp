@@ -32,7 +32,7 @@ std::string printCard(int c)
     }
 }
 
-//checking each card in the hand
+//checking each card in the hand and print it as J,Q,K,A etc
 void checkCards(std::vector<int> hand, bool flag)
 {
     int count = 0;
@@ -50,90 +50,93 @@ void checkCards(std::vector<int> hand, bool flag)
 }
 
 
+// playing a session
+// nods: numbers of decks, minimal bet, rounds
+void playBJ(int nods, int mbet, int pmoney, int rounds)
+{
+
+      int count = 0;
+      int win = 0;
+      int loss = 0;
+
+      // creating croupier and player
+      Croupier cr;
+      Player  pl;
+
+      // setting the Shoe
+      cr.setDeck(nods);
+
+      //minimal bet
+      cr.minBet = mbet;
+
+      //setting player's Money
+      pl.Money = pmoney;
+
+      // 300 rounds
+      for (int i = 0; i < rounds; i++)
+      {
+
+          // player needs money and we need cards in the Shoe
+          if (pl.Money <= cr.minBet || cr.cardTotal <= 10)
+              break;
+
+          // setting the first hands of the round (blackjacks?)
+          cr.setFirstCards(pl);
+
+          //checking the cards for player
+          checkCards(pl.pCards, true);
+
+          //checking the cards for croupier
+          checkCards(cr.cCards, false);
+
+          // checking total number for croupier
+          int cHand = cr.checkHand(cr.cCards).first;
+          int softC = cr.checkHand(cr.cCards).second;
+
+          // checking total number for player
+          int pHand = cr.checkHand(pl.pCards).first;
+          int softP = cr.checkHand(pl.pCards).second;
+
+          printf(" sum of player hand: %d\n",pHand);
+          (softP) ? printf(" soft hand for player\n") : printf(" hard hand for player\n");
+
+          printf(" sum of croupier hand: %d\n",cHand);
+          (softC) ? printf(" soft hand for croupier\n") : printf(" hard hand for croupier\n");
+
+          pl.basicStrategy(pHand,softP,cr.getFirstCard());
+
+          cr.dealingTo17();
+
+          //checking the winner of round
+          if (cr.getWinner(pl) == 1)
+              win++;
+          else if (cr.getWinner(pl) == -1)
+              loss++;
+
+          printf(" Money of player: %d\n\n",pl.Money);
+          printf(" card total: %d\n\n",cr.cardTotal);
+          printf(" end of round %d\n\n", i);
+
+          printf("---------------------------------------------------------\n");
+
+
+          cr.clearHand();
+          pl.clearHand();
+          count++;
+
+       }
+
+       printf(" Final balance of player: %d\n\n", pl.Money);
+       printf(" Total of hands: %d\n\n", count);
+       printf(" Total winnings: %d\n\n", win);
+       printf(" Total losses: %d\n\n", loss);
+
+}
+
 int main ()
 {
     // seed for randomness
     srand(time(NULL));
-
-    int count = 0;
-    int win = 0;
-    int loss = 0;
-
-    // number of decks into the Shoe
-    int nods = 6*100;
-
-    // creating croupier and player
-    Croupier cr;
-    Player  pl;
-
-    // setting the Shoe
-    cr.setDeck(nods);
-
-
-    //minimal bet
-    cr.minBet = 2;
-
-    //setting player's Money
-    pl.Money = 40;
-
-    // 300 rounds
-    for (int i = 0; i < 300; i++)
-    {
-
-        // player needs money and we need cards in the Shoe
-        if (pl.Money <= cr.minBet || cr.cardTotal <= 10)
-            break;
-
-        // setting the first hands of the round (blackjacks?)
-        cr.setFirstCards(pl);
-
-        //checking the cards for player
-        checkCards(pl.pCards, true);
-
-        //checking the cards for croupier
-        checkCards(cr.cCards, false);
-
-        // checking total number for croupier
-        int cHand = cr.checkHand(cr.cCards).first;
-        bool softC = cr.checkHand(cr.cCards).second;
-
-        // checking total number for player
-        int pHand = cr.checkHand(pl.pCards).first;
-        bool softP = cr.checkHand(pl.pCards).second;
-
-        printf(" sum of player hand: %d\n",pHand);
-        (softP) ? printf(" soft hand for player\n") : printf(" hard hand for player\n");
-
-        printf(" sum of croupier hand: %d\n",cHand);
-        (softC) ? printf(" soft hand for croupier\n") : printf(" hard hand for croupier\n");
-
-        printf(" player stand\n");
-
-        cr.dealingTo17();
-
-        //checking the winner of round
-        if (cr.getWinner(pl) == 1)
-            win++;
-        else if (cr.getWinner(pl) == -1)
-            loss++;
-
-        printf(" Money of player: %d\n\n",pl.Money);
-        printf(" card total: %d\n\n",cr.cardTotal);
-        printf(" end of round %d\n\n", i);
-
-        printf("---------------------------------------------------------\n");
-
-
-        cr.clearHand();
-        pl.clearHand();
-        count++;
-
-     }
-
-     printf(" Final balance of player: %d\n\n", pl.Money);
-     printf(" Total of hands: %d\n\n", count);
-     printf(" Total winnings: %d\n\n", win);
-     printf(" Total losses: %d\n\n", loss);
 
      return 0;
 }
