@@ -1,10 +1,13 @@
 #include <stdio.h>
-#include "croupier.h"
 #include <vector>
 #include <map>
 #include <string>
 #include <iostream>
 #include <ctime>
+#include "croupier.h"
+#include "player.h"
+
+//g++ bj.cpp croupier.cpp player.cpp -o blackjack
 
 /*
 *  basic bj program
@@ -103,7 +106,7 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
           printf(" sum of croupier hand: %d\n",cHand);
           (softC) ? printf(" soft hand for croupier\n") : printf(" hard hand for croupier\n");
 
-          pl.basicStrategy(pHand,softP,cr.getFirstCard());
+          // pl.basicStrategy(pHand,softP,cr.getFirstCard());
 
           cr.dealingTo17();
 
@@ -138,5 +141,7 @@ int main ()
     // seed for randomness
     srand(time(NULL));
 
+
      return 0;
+
 }
