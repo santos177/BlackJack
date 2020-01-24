@@ -30,7 +30,7 @@ void Player::basicStrategy(int pHand, int type, int firstCard)
 
 }
 
-bool Player::mplay(int pHand, int type, int firstCard, Croupier &cr)
+bool Player::mplay(Croupier &cr)
 {
 
     while(true)
@@ -38,28 +38,33 @@ bool Player::mplay(int pHand, int type, int firstCard, Croupier &cr)
         std::string option;
         std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender \n";
         std::cin >> option;
-        if (option == "S")
+        if (option == "S"){
+          int total = cr.checkHand(pCards).first;
+          printf("total now for player: %d\n", total);
           return true;
-        else if (option == "D")
-        {
-            pCards.push_back(cr.getCard());
-            return true;
 
-        } else if (option == "H"){
-            pCards.push_back(cr.getCard());
+        } else if (option == "D" || option == "H")
+        {
+            int newCard = cr.getCard();
+            pCards.push_back(newCard);
+            std::string strCard = cr.printCard(newCard);
+            std::cout << "new card for player:" << strCard << "\n";
+            int total = cr.checkHand(pCards).first;
+            printf("total now for player: %d\n", total);
+            if (option == "D") return true;
+
         } else if (option == "P") {
             // Split
+            printf("Splitting...\n");
             return true;
         } else if (option == "R"){
             printf("Surrender...\n");
             return true;
         } else {
             printf("Please enter a valid option!\n");
-            return false;
         }
 
-        int total = cr.checkHand(pCards).first;
-        if (total > 21) return true;
+        if (cr.checkHand(pCards).first > 21) return false;
 
     };
 

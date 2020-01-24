@@ -7,16 +7,23 @@
 #include "croupier.h"
 #include "player.h"
 
-// //who is the winner? 1: player wins, -1: croupier wins, 0: nobody
-int Croupier::getWinner(Player &pl)
+//who is the winner? 1: player wins, -1: croupier wins, 0: nobody
+int Croupier::getWinner(Player &pl, bool flag)
 {
+    // false indicate player got too much cards in his turn
+    if (!flag){
+        pl.Money -= 1;
+        printf("croupier wins!\n");
+        return -1;
+    }
+
     int plSum = Croupier::checkHand(pl.pCards).first;
     int crSum = Croupier::checkHand(cCards).first;
 
     printf("plSum: %d\n",plSum);
     printf("crSum: %d\n",crSum);
 
-    if (crSum > 21 || ((plSum > crSum) && (21 >= plSum)))
+    if(crSum > 21 && 21 >= plSum)
     {
         if(pl.blackjack){
             pl.Money += 3;
@@ -25,14 +32,30 @@ int Croupier::getWinner(Player &pl)
 
         printf("player wins!\n");
         return 1;
-
-    } else if (plSum > 21 || ((crSum > plSum) && (21 >= crSum))){
+    } else if (plSum > 21 && 21 >= crSum){
         pl.Money -= 2;
         printf("croupier wins!\n");
         return -1;
-    } else
-        printf("nobody wins...\n");
-        return 0;
+
+    } else if(21 >= plSum && 21 >= crSum){
+        if (plSum > crSum)
+        {
+            pl.Money += 2;
+            printf("player wins!\n");
+            return 1;
+
+        } else if (crSum > plSum){
+            pl.Money -= 2;
+            printf("croupier wins!\n");
+            return -1;
+
+        } else {
+          printf("nobody wins...\n");
+          return 0;
+        }
+
+    }
+
 }
 
 // clear the hand
@@ -186,8 +209,8 @@ int Croupier::dealingTo17()
     while(sum < 17)
     {
         int crC = getCard();
-        // std::string strCard = printCard(crC);
-        // std::cout << "new card for croupier:" << strCard << "\n";
+        std::string strCard = printCard(crC);
+        std::cout << "new card for croupier:" << strCard << "\n";
         cCards.push_back(crC);
         sum = checkHand(cCards).first;
         printf("sum for croupier: %d\n", sum);
@@ -195,5 +218,43 @@ int Croupier::dealingTo17()
     }
 
     return sum;
+
+}
+
+// converting numbers into card symbols
+std::string Croupier::printCard(int c)
+{
+    if (c == 1) {
+        return "A";
+
+    } else if (2 <= c && c <= 10){
+        std::string result = std::to_string(c);
+        return result;
+
+    } else if (c == 11){
+        return "J";
+
+    } else if (c == 12){
+        return "Q";
+
+    } else if (c == 13) {
+        return "K";
+    }
+}
+
+//checking each card in the hand and print it as J,Q,K,A etc
+void Croupier::checkCards(std::vector<int> hand, bool flag)
+{
+    int count = 0;
+    std::string quote;
+
+    (flag) ?  quote = "card in player's hand: " : quote = "card in croupier's hand: ";
+
+    for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
+    {
+        int card = *(it);
+        std::string strCard = printCard(card);
+        std::cout << quote << strCard << "\n";
+    }
 
 }

@@ -29,7 +29,7 @@ class Croupier {
     //blackjack?
     int blackjack = false;
 
-    int getWinner(Player &pl);
+    int getWinner(Player &pl, bool flag);
 
     void clearHand();
 
@@ -46,6 +46,10 @@ class Croupier {
     std::pair<int, int> checkHand(std::vector<int> hand);
 
     int dealingTo17();
+
+    std::string printCard(int c);
+
+    void checkCards(std::vector<int> hand, bool flag);
 
 };
 

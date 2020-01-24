@@ -37,7 +37,7 @@ class Player {
 
     void basicStrategy(int pHand, int type, int firstCard);
 
-    bool mplay(int pHand, int type, int firstCard, Croupier &cr);
+    bool mplay(Croupier &cr);
 
 };
 

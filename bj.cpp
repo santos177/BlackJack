@@ -14,44 +14,6 @@
 *
 */
 
-// converting numbers into card symbols
-std::string printCard(int c)
-{
-    if (c == 1) {
-        return "A";
-
-    } else if (2 <= c && c <= 10){
-        std::string result = std::to_string(c);
-        return result;
-
-    } else if (c == 11){
-        return "J";
-
-    } else if (c == 12){
-        return "Q";
-
-    } else if (c == 13) {
-        return "K";
-    }
-}
-
-//checking each card in the hand and print it as J,Q,K,A etc
-void checkCards(std::vector<int> hand, bool flag)
-{
-    int count = 0;
-    std::string quote;
-
-    (flag) ?  quote = "card in player's hand: " : quote = "card in croupier's hand: ";
-
-    for (std::vector<int>::iterator it = hand.begin(); it != hand.end();++it)
-    {
-        int card = *(it);
-        std::string strCard = printCard(card);
-        std::cout << quote << strCard << "\n";
-    }
-
-}
-
 
 // playing a session
 // nods: numbers of decks, minimal bet, rounds
@@ -87,10 +49,10 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
           cr.setFirstCards(pl);
 
           //checking the cards for player
-          checkCards(pl.pCards, true);
+          cr.checkCards(pl.pCards, true);
 
           //checking the cards for croupier
-          checkCards(cr.cCards, false);
+          cr.checkCards(cr.cCards, false);
 
           // checking total number for croupier
           int cHand = cr.checkHand(cr.cCards).first;
@@ -100,20 +62,30 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
           int pHand = cr.checkHand(pl.pCards).first;
           int softP = cr.checkHand(pl.pCards).second;
 
-          printf(" sum of player hand: %d\n",pHand);
-          (softP) ? printf(" soft hand for player\n") : printf(" hard hand for player\n");
+          int fcard = cr.getFirstCard();
 
-          printf(" sum of croupier hand: %d\n",cHand);
-          (softC) ? printf(" soft hand for croupier\n") : printf(" hard hand for croupier\n");
+          printf(" sum of player hand: %d\n",pHand);
+          // (softP) ? printf(" soft hand for player\n") : printf(" hard hand for player\n");
+
+          std::string strCard = cr.printCard(fcard);
+          std::cout << "croupier's first card: " << strCard << "\n";
+          // (softC) ? printf(" soft hand for croupier\n") : printf(" hard hand for croupier\n");
 
           // pl.basicStrategy(pHand,softP,cr.getFirstCard());
 
-          cr.dealingTo17();
+          // manual playing
+          bool validH = pl.mplay(cr);
+
+          if(!validH) printf("  player passed 21 !!!!!\n");
+
+
+          // croupier finishing
+          if(validH) cr.dealingTo17();
 
           //checking the winner of round
-          if (cr.getWinner(pl) == 1)
+          if (cr.getWinner(pl, validH) == 1)
               win++;
-          else if (cr.getWinner(pl) == -1)
+          else if (cr.getWinner(pl, validH) == -1)
               loss++;
 
           printf(" Money of player: %d\n\n",pl.Money);
@@ -141,7 +113,13 @@ int main ()
     // seed for randomness
     srand(time(NULL));
 
+    int nods = 6;
+    int mbet = 1;
+    int pmoney = 2000;
+    int rounds = 10;
 
-     return 0;
+    playBJ(nods, mbet, pmoney, rounds);
+
+    return 0;
 
 }
