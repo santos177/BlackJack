@@ -52,7 +52,7 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
           cr.checkCards(pl.pCards, true);
 
           //checking the cards for croupier
-          cr.checkCards(cr.cCards, false);
+          // cr.checkCards(cr.cCards, false);
 
           // checking total number for croupier
           int cHand = cr.checkHand(cr.cCards).first;
@@ -64,7 +64,7 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
 
           int fcard = cr.getFirstCard();
 
-          printf(" sum of player hand: %d\n",pHand);
+          printf("sum of player hand: %d\n",pHand);
           // (softP) ? printf(" soft hand for player\n") : printf(" hard hand for player\n");
 
           std::string strCard = cr.printCard(fcard);
@@ -83,9 +83,11 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
           if(validH) cr.dealingTo17();
 
           //checking the winner of round
-          if (cr.getWinner(pl, validH) == 1)
+          int result = cr.getWinner(pl);
+
+          if (result == 1)
               win++;
-          else if (cr.getWinner(pl, validH) == -1)
+          else if (result == -1)
               loss++;
 
           printf(" Money of player: %d\n\n",pl.Money);

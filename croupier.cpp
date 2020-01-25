@@ -8,15 +8,8 @@
 #include "player.h"
 
 //who is the winner? 1: player wins, -1: croupier wins, 0: nobody
-int Croupier::getWinner(Player &pl, bool flag)
+int Croupier::getWinner(Player &pl)
 {
-    // false indicate player got too much cards in his turn
-    if (!flag){
-        pl.Money -= 1;
-        printf("croupier wins!\n");
-        return -1;
-    }
-
     int plSum = Croupier::checkHand(pl.pCards).first;
     int crSum = Croupier::checkHand(cCards).first;
 
@@ -30,23 +23,28 @@ int Croupier::getWinner(Player &pl, bool flag)
         } else
             pl.Money += 2;
 
-        printf("player wins!\n");
+        printf("player wins! (blackjack)\n");
         return 1;
     } else if (plSum > 21 && 21 >= crSum){
         pl.Money -= 2;
-        printf("croupier wins!\n");
+        printf("croupier wins! (player above 21)\n");
         return -1;
 
     } else if(21 >= plSum && 21 >= crSum){
+      
         if (plSum > crSum)
         {
-            pl.Money += 2;
-            printf("player wins!\n");
+            if(pl.dble){
+                pl.Money += 4;
+            } else
+                pl.Money += 2;
+
+            printf("player wins\n");
             return 1;
 
         } else if (crSum > plSum){
             pl.Money -= 2;
-            printf("croupier wins!\n");
+            printf("croupier wins (crSum > plSum) !\n");
             return -1;
 
         } else {
@@ -67,6 +65,11 @@ void Croupier::clearHand(){
 int Croupier::getFirstCard()
 {
     return cCards.front();
+}
+
+int Croupier::getHiddenCard()
+{
+    return cCards[1];
 }
 
 // do we have Blackjack?
@@ -187,14 +190,19 @@ std::pair<int, int> Croupier::checkHand (std::vector<int> hand)
 
     if (count == 2 && (hand[0] == hand[1]))
         flag = -1; //pairs
-    else if(aceSum != 0)
+    else if(aceSum > 0)
         flag = 1;  // soft hand
 
-    // adding the Aces sum
-    if(aceSum == 1)
-        sum += 11;
-    else if (aceSum > 1)
-        sum += 10 + aceSum;
+    // adding the Aces
+    for (int i = 0; i < aceSum; ++i)
+    {
+         int parTotal = sum + 11;
+
+         if (parTotal > 21)
+             sum++;
+         else
+             sum += 11;
+    }
 
     return std::make_pair(sum,flag);
 
@@ -203,6 +211,11 @@ std::pair<int, int> Croupier::checkHand (std::vector<int> hand)
 //croupier taking cards until 17
 int Croupier::dealingTo17()
 {
+    //showing hidden card
+    int hidden = getHiddenCard();
+    std::string strHdn = printCard(hidden);
+    std::cout << "croupier's hidden card:" << strHdn << "\n";
+
     // first check
     int sum = checkHand(cCards).first;
 

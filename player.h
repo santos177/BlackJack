@@ -33,6 +33,9 @@ class Player {
     //blackjack?
     int blackjack = false;
 
+    //double bet?
+    int dble = false;
+
     void clearHand();
 
     void basicStrategy(int pHand, int type, int firstCard);

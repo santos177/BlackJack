@@ -29,11 +29,13 @@ class Croupier {
     //blackjack?
     int blackjack = false;
 
-    int getWinner(Player &pl, bool flag);
+    int getWinner(Player &pl);
 
     void clearHand();
 
     int getFirstCard();
+
+    int getHiddenCard();
 
     bool checkBlackJack(std::vector<int> firstHand);
 
