@@ -10,40 +10,41 @@
 //who is the winner? 1: player wins, -1: croupier wins, 0: nobody
 int Croupier::getWinner(Player &pl)
 {
+    int bet = 0;
     int plSum = Croupier::checkHand(pl.pCards).first;
     int crSum = Croupier::checkHand(cCards).first;
 
     printf("plSum: %d\n",plSum);
     printf("crSum: %d\n",crSum);
 
+    (pl.dble) ? bet = minBet * 2 : bet = minBet;
+
+    if (pl.blackjack)  bet = minBet * 3 ;
+
+
     if(crSum > 21 && 21 >= plSum)
     {
-        if(pl.blackjack){
-            pl.Money += 3;
-        } else
-            pl.Money += 2;
+        pl.Money += bet;
+        printf("player wins!\n");
 
-        printf("player wins! (blackjack)\n");
         return 1;
+
     } else if (plSum > 21 && 21 >= crSum){
-        pl.Money -= 2;
+        pl.Money -= bet;
         printf("croupier wins! (player above 21)\n");
         return -1;
 
     } else if(21 >= plSum && 21 >= crSum){
-      
+
         if (plSum > crSum)
         {
-            if(pl.dble){
-                pl.Money += 4;
-            } else
-                pl.Money += 2;
-
+            pl.Money += bet;
             printf("player wins\n");
+
             return 1;
 
         } else if (crSum > plSum){
-            pl.Money -= 2;
+            pl.Money -= bet;
             printf("croupier wins (crSum > plSum) !\n");
             return -1;
 
@@ -91,8 +92,11 @@ bool Croupier::checkBlackJack(std::vector<int> firstHand)
     }
 
     if (ace && ten)
+    {
+        printf("player has Blackjack...\n");
         return true;
-    else
+
+    } else
         return false;
 
 }
@@ -198,10 +202,10 @@ std::pair<int, int> Croupier::checkHand (std::vector<int> hand)
     {
          int parTotal = sum + 11;
 
-         if (parTotal > 21)
-             sum++;
+         if (21 >= parTotal)
+            sum += 11;
          else
-             sum += 11;
+            sum++;
     }
 
     return std::make_pair(sum,flag);

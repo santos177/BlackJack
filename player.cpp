@@ -32,47 +32,57 @@ void Player::basicStrategy(int pHand, int type, int firstCard)
 
 bool Player::mplay(Croupier &cr)
 {
+      while(true)
+      {
+          std::string option;
+          std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender \n";
+          std::cin >> option;
 
-    while(true)
-    {
-        std::string option;
-        std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender \n";
-        std::cin >> option;
-        if (option == "S"){
-          int total = cr.checkHand(pCards).first;
-          printf("total now for player: %d\n", total);
-          return true;
+          if (option == "P"){
+               printf("special case: SPLIT\n");
+          }
 
-        } else if (option == "D" || option == "H"){
-          
-            int newCard = cr.getCard();
-            pCards.push_back(newCard);
-            std::string strCard = cr.printCard(newCard);
-            std::cout << "new card for player:" << strCard << "\n";
-            int total = cr.checkHand(pCards).first;
-            printf("total now for player: %d\n", total);
+          if(primitiveOp(cr, pCards, option)) return true;
 
-            if (option == "D")
-            {
-                dble = true; //double bet
-                return true;
-            }
 
-        } else if (option == "P") {
-            // Split
-            printf("Splitting...\n");
+      };
+}
+
+bool Player::primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string option)
+{
+
+    if (option == "S"){
+         int total = cr.checkHand(Hand).first;
+         printf("total now for player: %d\n", total);
+         return true;
+
+    } else if (option == "D" || option == "H"){
+
+        int newCard = cr.getCard();
+        Hand.push_back(newCard);
+        std::string strCard = cr.printCard(newCard);
+        std::cout << "new card for player:" << strCard << "\n";
+        int total = cr.checkHand(Hand).first;
+        printf("total now for player: %d\n", total);
+
+        if (option == "D")
+        {
+            dble = true; //double bet
             return true;
-
-        } else if (option == "R"){
-            printf("Surrender...\n");
-            return true;
-
-        } else {
-            printf("Please enter a valid option!\n");
         }
 
-        if (cr.checkHand(pCards).first > 21) return false;
+        return false;
 
-    };
+    }  else if (option == "R"){
+        printf("Surrender...\n");
+        return true;
+
+    } else {
+        printf("Please enter a valid option!\n");
+        return false;
+    }
+
+    if (cr.checkHand(Hand).first > 21) return true;
+
 
 }

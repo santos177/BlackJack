@@ -7,7 +7,6 @@
 #include "croupier.h"
 #include "player.h"
 
-//g++ bj.cpp croupier.cpp player.cpp -o blackjack
 
 /*
 *  basic bj program
@@ -116,8 +115,8 @@ int main ()
     srand(time(NULL));
 
     int nods = 6;
-    int mbet = 1;
-    int pmoney = 2000;
+    int mbet = 5;
+    int pmoney = 200;
     int rounds = 10;
 
     playBJ(nods, mbet, pmoney, rounds);

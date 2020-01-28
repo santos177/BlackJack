@@ -28,19 +28,24 @@ class Player {
 
     std::vector<int> pCards;
 
+    // for split
+    std::vector<std::vector<int>> splitHd;
+
     int Sum;
 
     //blackjack?
     int blackjack = false;
 
     //double bet?
-    int dble = false;
+    bool dble = false;
 
     void clearHand();
 
     void basicStrategy(int pHand, int type, int firstCard);
 
     bool mplay(Croupier &cr);
+
+    bool primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string option);
 
 };
 
