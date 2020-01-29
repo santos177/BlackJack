@@ -34,15 +34,39 @@ bool Player::mplay(Croupier &cr)
 {
       while(true)
       {
-          std::string option;
-          std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender \n";
-          std::cin >> option;
+          std::string option = inputOption();
 
-          if (option == "P"){
+          if (option == "P")
+          {
                printf("special case: SPLIT\n");
-          }
+               if (cr.checkHand(pCards).second == 1)
+               {
+                  for (int i = 0; i <= 1; ++i)
+                  {
+                      // passing each card to each hand
+                      splitHd[i].push_back(pCards[i]);
+                      int rnd = i + 1;
 
-          if(primitiveOp(cr, pCards, option)) return true;
+                      printf("splitted hand number %d\n",rnd);
+
+                      std::string strCard = cr.printCard(splitHd[i][0]);
+                      std::cout << "first card of splitted hand:" << strCard << "\n";
+
+                      while(true)
+                      {
+                          std::string option = inputOption();
+                          if(primitiveOp(cr, splitHd[i], option)) break;
+                      };
+
+
+                  }
+
+               } else
+                   printf("player doesn't have a pair!\n");
+
+          } else {
+              if(primitiveOp(cr, pCards, option)) return true;
+          }
 
 
       };
@@ -85,4 +109,12 @@ bool Player::primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string optio
     if (cr.checkHand(Hand).first > 21) return true;
 
 
+}
+
+std::string Player::inputOption()
+{
+    std::string option;
+    std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender \n";
+    std::cin >> option;
+    return option;
 }

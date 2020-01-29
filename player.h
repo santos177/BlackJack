@@ -47,6 +47,8 @@ class Player {
 
     bool primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string option);
 
+    std::string inputOption();
+
 };
 
 #endif // PLAYER_H
