@@ -28,8 +28,9 @@ class Player {
 
     std::vector<int> pCards;
 
-    // for split
-    std::vector<std::vector<int>> splitHd;
+    // for split results : key: number of hand, pair(sum, flag)
+    // flag = true when the hand is double down
+    std::map<int,std::pair<int,bool>> splitRes;
 
     int Sum;
 

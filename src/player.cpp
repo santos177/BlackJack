@@ -38,28 +38,52 @@ bool Player::mplay(Croupier &cr)
 
           if (option == "P")
           {
+
                printf("special case: SPLIT\n");
-               if (cr.checkHand(pCards).second == 1)
+               if (cr.checkHand(pCards).second == -1)
                {
+                   int spCard = pCards[0];
+                   clearHand();
+
                   for (int i = 0; i <= 1; ++i)
                   {
-                      // passing each card to each hand
-                      splitHd[i].push_back(pCards[i]);
-                      int rnd = i + 1;
+                      pCards.push_back(spCard);
 
-                      printf("splitted hand number %d\n",rnd);
+                      int count = i + 1;
+                      printf("splitted hand number %d\n",count++);
 
-                      std::string strCard = cr.printCard(splitHd[i][0]);
+
+                      std::string strCard = cr.printCard(pCards[0]);
                       std::cout << "first card of splitted hand:" << strCard << "\n";
+
 
                       while(true)
                       {
                           std::string option = inputOption();
-                          if(primitiveOp(cr, splitHd[i], option)) break;
+
+                          if(primitiveOp(cr, pCards, option))
+                          {
+                              int sum = cr.checkHand(pCards).first;
+                              splitRes[i] = std::make_pair(sum,dble);
+                              clearHand();
+                              break;
+                          }
+
+
                       };
 
-
                   }
+
+                  int count = 1;
+
+                  for(std::map<int,std::pair<int,bool>>::iterator it = splitRes.begin(); it != splitRes.end(); ++it)
+                  {
+                      std::pair<int,bool> res = it->second;
+                      printf("split hand number %d result: total= %d, double:%d\n", count, res.first, res.second);
+                      count++;
+                  }
+
+                  return true;
 
                } else
                    printf("player doesn't have a pair!\n");
@@ -84,8 +108,9 @@ bool Player::primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string optio
 
         int newCard = cr.getCard();
         Hand.push_back(newCard);
-        std::string strCard = cr.printCard(newCard);
-        std::cout << "new card for player:" << strCard << "\n";
+        // std::string strCard = cr.printCard(newCard);
+        printf("new card for player: %d\n", newCard);
+        // std::cout << "new card for player:" << strCard << "\n";
         int total = cr.checkHand(Hand).first;
         printf("total now for player: %d\n", total);
 
@@ -94,6 +119,8 @@ bool Player::primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string optio
             dble = true; //double bet
             return true;
         }
+
+        if (cr.checkHand(Hand).first > 21) return true;
 
         return false;
 
@@ -106,7 +133,6 @@ bool Player::primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string optio
         return false;
     }
 
-    if (cr.checkHand(Hand).first > 21) return true;
 
 
 }
@@ -114,7 +140,8 @@ bool Player::primitiveOp(Croupier &cr, std::vector<int> &Hand, std::string optio
 std::string Player::inputOption()
 {
     std::string option;
-    std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender \n";
+    std::cout << "What do you want to do?: [S]Stand, [H]Hit, [D]Double, [P] Split, [R] Surrender\n" << std::endl;
     std::cin >> option;
+    std::cin.clear();
     return option;
 }

@@ -205,7 +205,7 @@ std::pair<int, int> Croupier::checkHand (std::vector<int> hand)
          if (21 >= parTotal)
             sum += 11;
          else
-            sum++;
+             sum++;
     }
 
     return std::make_pair(sum,flag);
