@@ -14,6 +14,10 @@ class Player;
 class Croupier {
   public:
 
+    int wins = 0;
+
+    int losses = 0;
+
     // cards in full Shoe
     int cardTotal;
 
@@ -29,7 +33,9 @@ class Croupier {
     //blackjack?
     int blackjack = false;
 
-    int getWinner(Player &pl);
+    void settleCash(Player &pl);
+
+    void getWinner(std::vector<int> pHand, bool dble, bool blackjack, int &money);
 
     void clearHand();
 

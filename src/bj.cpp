@@ -82,12 +82,7 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
           if(validH) cr.dealingTo17();
 
           //checking the winner of round
-          int result = cr.getWinner(pl);
-
-          if (result == 1)
-              win++;
-          else if (result == -1)
-              loss++;
+          cr.settleCash(pl);
 
           printf(" Money of player: %d\n\n",pl.Money);
           printf(" card total: %d\n\n",cr.cardTotal);
@@ -104,8 +99,8 @@ void playBJ(int nods, int mbet, int pmoney, int rounds)
 
        printf(" Final balance of player: %d\n\n", pl.Money);
        printf(" Total of hands: %d\n\n", count);
-       printf(" Total winnings: %d\n\n", win);
-       printf(" Total losses: %d\n\n", loss);
+       printf(" Total winnings: %d\n\n", cr.wins);
+       printf(" Total losses: %d\n\n", cr.losses);
 
 }
 

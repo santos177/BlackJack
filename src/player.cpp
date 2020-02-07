@@ -9,6 +9,7 @@
 
 void Player::clearHand(){
     pCards.clear();
+    sptHand.clear();
 }
 
 // inputs: amount of player; type: pair, soft or hard hand for player; croupier's first card
@@ -48,13 +49,13 @@ bool Player::mplay(Croupier &cr)
 
                   for (int i = 0; i <= 1; ++i)
                   {
-                      std::vector<int> auxHand;
-                      auxHand.push_back(spCard);
+                      spthand auxHand;
+                      auxHand.Cards.push_back(spCard);
 
                       printf("splitted hand number %d\n",i+1);
 
 
-                      std::string strCard = cr.printCard(auxHand[0]);
+                      std::string strCard = cr.printCard(auxHand.Cards[0]);
                       std::cout << "first card of splitted hand:" << strCard << "\n";
 
 
@@ -62,11 +63,17 @@ bool Player::mplay(Croupier &cr)
                       {
                           std::string option = inputOption();
 
-                          if(primitiveOp(cr, auxHand, option))
+                          // just for split , in the future we can generalize this
+                          if(option == "D")
+                              auxHand.dble = true;
+
+                          if(primitiveOp(cr, auxHand.Cards, option))
                           {
-                              int sum = cr.checkHand(auxHand).first;
+                              int sum = cr.checkHand(auxHand.Cards).first;
                               sptHand.push_back(auxHand);
                               printf("sum of hand = %d\n",sum);
+                              if (auxHand.dble)
+                                  printf("hand doubled!\n");
                               break;
                           }
 

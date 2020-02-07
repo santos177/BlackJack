@@ -9,6 +9,11 @@
 #include <ctime>
 #include "croupier.h"
 
+struct spthand {
+   bool dble = false;
+   std::vector<int> Cards;
+} ;
+
 class Croupier;
 
 class Player {
@@ -28,19 +33,18 @@ class Player {
 
     std::vector<int> pCards;
 
+
     // split hands
-    std::vector<std::vector<int>> sptHand;
+    std::vector<spthand> sptHand;
 
     int Sum;
 
-    //blackjack?
-    int blackjack = false;
-
-    //double bet?
     bool dble = false;
 
-    //split?
+    bool blackjack = false;
+
     bool split = false;
+
 
     void clearHand();
 
