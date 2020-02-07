@@ -42,18 +42,19 @@ bool Player::mplay(Croupier &cr)
                printf("special case: SPLIT\n");
                if (cr.checkHand(pCards).second == -1)
                {
+                   split = true;
                    int spCard = pCards[0];
                    clearHand();
 
                   for (int i = 0; i <= 1; ++i)
                   {
-                      pCards.push_back(spCard);
+                      std::vector<int> auxHand;
+                      auxHand.push_back(spCard);
 
-                      int count = i + 1;
-                      printf("splitted hand number %d\n",count++);
+                      printf("splitted hand number %d\n",i+1);
 
 
-                      std::string strCard = cr.printCard(pCards[0]);
+                      std::string strCard = cr.printCard(auxHand[0]);
                       std::cout << "first card of splitted hand:" << strCard << "\n";
 
 
@@ -61,26 +62,17 @@ bool Player::mplay(Croupier &cr)
                       {
                           std::string option = inputOption();
 
-                          if(primitiveOp(cr, pCards, option))
+                          if(primitiveOp(cr, auxHand, option))
                           {
-                              int sum = cr.checkHand(pCards).first;
-                              splitRes[i] = std::make_pair(sum,dble);
-                              clearHand();
+                              int sum = cr.checkHand(auxHand).first;
+                              sptHand.push_back(auxHand);
+                              printf("sum of hand = %d\n",sum);
                               break;
                           }
 
 
                       };
 
-                  }
-
-                  int count = 1;
-
-                  for(std::map<int,std::pair<int,bool>>::iterator it = splitRes.begin(); it != splitRes.end(); ++it)
-                  {
-                      std::pair<int,bool> res = it->second;
-                      printf("split hand number %d result: total= %d, double:%d\n", count, res.first, res.second);
-                      count++;
                   }
 
                   return true;

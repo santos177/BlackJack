@@ -7,6 +7,7 @@
 #include "croupier.h"
 #include "player.h"
 
+//NOTE: we need to change getWinner, into checkWinnerHands (considering splits)
 //who is the winner? 1: player wins, -1: croupier wins, 0: nobody
 int Croupier::getWinner(Player &pl)
 {
@@ -198,15 +199,12 @@ std::pair<int, int> Croupier::checkHand (std::vector<int> hand)
         flag = 1;  // soft hand
 
     // adding the Aces
-    for (int i = 0; i < aceSum; ++i)
-    {
-         int parTotal = sum + 11;
+    int preTotal = sum + aceSum * 11;
 
-         if (21 >= parTotal)
-            sum += 11;
-         else
-             sum++;
-    }
+    if (21 < preTotal)
+       sum += aceSum;
+    else
+       sum = preTotal;
 
     return std::make_pair(sum,flag);
 
